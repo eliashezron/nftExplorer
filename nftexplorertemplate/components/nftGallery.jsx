@@ -1,43 +1,43 @@
-import { useEffect, useState } from "react";
-import styles from "../styles/NftGallery.module.css";
-import { useAccount } from "wagmi";
+import { useEffect, useState } from "react"
+import styles from "../styles/NftGallery.module.css"
+import { useAccount } from "wagmi"
 
 export default function NFTGallery({}) {
-  const [nfts, setNfts] = useState();
+  const [nfts, setNfts] = useState()
   const [walletOrCollectionAddress, setWalletOrCollectionAddress] =
-    useState("vitalik.eth");
-  const [fetchMethod, setFetchMethod] = useState("wallet");
-  const [pageKey, setPageKey] = useState();
-  const [spamFilter, setSpamFilter] = useState(true);
-  const [isLoading, setIsloading] = useState(false);
-  const { address, isConnected } = useAccount();
-  const [chain, setChain] = useState(process.env.NEXT_PUBLIC_ALCHEMY_NETWORK);
+    useState("vitalik.eth")
+  const [fetchMethod, setFetchMethod] = useState("wallet")
+  const [pageKey, setPageKey] = useState()
+  const [spamFilter, setSpamFilter] = useState(true)
+  const [isLoading, setIsloading] = useState(false)
+  const { address, isConnected } = useAccount()
+  const [chain, setChain] = useState(process.env.NEXT_PUBLIC_ALCHEMY_NETWORK)
 
   const changeFetchMethod = (e) => {
     setNfts()
     setPageKey()
     switch (e.target.value) {
       case "wallet":
-        setWalletOrCollectionAddress("vitalik.eth");
+        setWalletOrCollectionAddress("vitalik.eth")
 
-        break;
+        break
       case "collection":
         setWalletOrCollectionAddress(
           "0x8a90CAb2b38dba80c64b7734e58Ee1dB38B8992e"
-        );
-        break;
+        )
+        break
       case "connectedWallet":
-        setWalletOrCollectionAddress(address);
-        break;
+        setWalletOrCollectionAddress(address)
+        break
     }
-    setFetchMethod(e.target.value);
-  };
+    setFetchMethod(e.target.value)
+  }
   const fetchNFTs = async (pagekey) => {
-    if (!pageKey) setIsloading(true);
+    if (!pageKey) setIsloading(true)
     const endpoint =
       fetchMethod == "wallet" || fetchMethod == "connectedWallet"
         ? "/api/getNftsForOwner"
-        : "/api/getNftsForCollection";
+        : "/api/getNftsForCollection"
     try {
       const res = await fetch(endpoint, {
         method: "POST",
@@ -50,31 +50,31 @@ export default function NFTGallery({}) {
           chain: chain,
           excludeFilter: spamFilter,
         }),
-      }).then((res) => res.json());
+      }).then((res) => res.json())
       if (nfts?.length && pageKey) {
-        setNfts((prevState) => [...prevState, ...res.nfts]);
+        setNfts((prevState) => [...prevState, ...res.nfts])
       } else {
-        setNfts();
-        setNfts(res.nfts);
+        setNfts()
+        setNfts(res.nfts)
       }
       if (res.pageKey) {
-        setPageKey(res.pageKey);
+        setPageKey(res.pageKey)
       } else {
-        setPageKey();
+        setPageKey()
       }
     } catch (e) {
-      console.log(e);
+      console.log(e)
     }
 
-    setIsloading(false);
-  };
+    setIsloading(false)
+  }
 
   useEffect(() => {
-    fetchNFTs();
-  }, [fetchMethod]);
+    fetchNFTs()
+  }, [fetchMethod])
   useEffect(() => {
-    fetchNFTs();
-  }, [spamFilter]);
+    fetchNFTs()
+  }, [spamFilter])
 
   return (
     <div className={styles.nft_gallery_page}>
@@ -85,12 +85,12 @@ export default function NFTGallery({}) {
             <select
               defaultValue={"wallet"}
               onChange={(e) => {
-                changeFetchMethod(e);
+                changeFetchMethod(e)
               }}
             >
               <option value={"wallet"}>wallet</option>
               <option value={"collection"}>collection</option>
-              <option value={"connectedWallet"}>connected wallet</option>
+              <option value={"connectedWallet"}>connected wallet/ens</option>
             </select>
           </div>
         </div>
@@ -99,14 +99,14 @@ export default function NFTGallery({}) {
             <input
               value={walletOrCollectionAddress}
               onChange={(e) => {
-                setWalletOrCollectionAddress(e.target.value);
+                setWalletOrCollectionAddress(e.target.value)
               }}
-              placeholder="Insert NFTs contract or wallet address"
+              placeholder='Insert NFTs contract or wallet address'
             ></input>
             <div className={styles.select_container_alt}>
               <select
                 onChange={(e) => {
-                  setChain(e.target.value);
+                  setChain(e.target.value)
                 }}
                 defaultValue={process.env.ALCHEMY_NETWORK}
               >
@@ -143,7 +143,7 @@ export default function NFTGallery({}) {
                 <input
                   onChange={(e) => setSpamFilter(e.target.checked)}
                   checked={spamFilter}
-                  type="checkbox"
+                  type='checkbox'
                 />
                 <span className={`${styles.slider} ${styles.round}`}></span>
               </label>
@@ -153,7 +153,7 @@ export default function NFTGallery({}) {
           <div className={styles.nfts_display}>
             {nfts?.length ? (
               nfts.map((nft) => {
-                return <NftCard key={nft.tokenId} nft={nft} />;
+                return <NftCard key={nft.tokenId} nft={nft} />
               })
             ) : (
               <div className={styles.loading_box}>
@@ -169,7 +169,7 @@ export default function NFTGallery({}) {
           <a
             className={styles.button_black}
             onClick={() => {
-              fetchNFTs(pageKey);
+              fetchNFTs(pageKey)
             }}
           >
             Load more
@@ -177,7 +177,7 @@ export default function NFTGallery({}) {
         </div>
       )}
     </div>
-  );
+  )
 }
 function NftCard({ nft }) {
   return (
@@ -205,8 +205,8 @@ function NftCard({ nft }) {
                 src={
                   "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Twitter_Verified_Badge.svg/2048px-Twitter_Verified_Badge.svg.png"
                 }
-                width="20px"
-                height="20px"
+                width='20px'
+                height='20px'
               />
             ) : null}
           </div>
@@ -219,8 +219,8 @@ function NftCard({ nft }) {
               src={
                 "https://etherscan.io/images/brandassets/etherscan-logo-circle.svg"
               }
-              width="15px"
-              height="15px"
+              width='15px'
+              height='15px'
             />
           </div>
         </div>
@@ -230,5 +230,5 @@ function NftCard({ nft }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
